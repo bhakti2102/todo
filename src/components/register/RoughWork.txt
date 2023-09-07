@@ -1,0 +1,82 @@
+ test.skip("calls dispatch with correct payload when submitted", async () => {
+        
+      const mockDispatch = jest.fn();
+      jest.mock("react-redux", () => ({
+        useDispatch: () => mockDispatch,
+        useSelector: () => ({}),
+      }));
+     
+      render(
+        <Provider store={store}>
+          <MemoryRouter>
+              <Register/> 
+          </MemoryRouter>
+        </Provider>
+     );
+     await act(async() => {
+      const usernameInput = screen.getByPlaceholderText(/Enter Username/i);
+      const passwordInput = screen.getByPlaceholderText(/Password/i);
+      const submitButton = screen.getByRole("button", { name: /Submit/i });
+  
+      userEvent.type(usernameInput, "testuser");
+      userEvent.type(passwordInput, "Test123@");
+  
+      const maleGenderInput = screen.getByRole("radio" , {name: 'Male'});
+      expect(maleGenderInput).not.toBeChecked();
+      userEvent.click(maleGenderInput);
+  
+      expect(mockDispatch).not.toHaveBeenCalled();
+  
+      userEvent.click(submitButton);
+     });
+     expect(store.getActions()[0]).toMatchObject({ payload: {userid: "testuser", password: "Test123@",gender: "Male", },})
+     
+      
+    // expect(mockDispatch).toHaveBeenCalledWith({
+    //     type: "SIGNUP_USER",
+    //     payload: {
+    //       userid: "testuser",
+    //       password: "Test123@",
+    //       gender: "Male",
+    //     },
+    //   });
+    });
+});
+
+
+
+// describe(' Checking Register Component Events by using userEvent Library ' , () =>{
+  
+  
+//   test('Checking the Register Submit Button With Valid Username And Password', async () => {
+//   render(
+//       <Provider store={store}>
+//         <MemoryRouter>
+//         <Register />
+//         </MemoryRouter>
+//       </Provider>
+//     );
+
+//     //Find The Elements First
+//     await act(async() => {
+//     const usernameTestField = screen.getByPlaceholderText(/Username/i);
+//     const passwordTestField = screen.getByPlaceholderText(/Password/i);
+//     const submitButton = screen.getByRole('button', { name: /Submit/ });
+
+//     //type Method
+//      userEvent.type(usernameTestField, 'devesh');
+//      userEvent.type(passwordTestField, 'Pass@123');  
+//      expect(usernameTestField).toHaveValue('devesh');
+//      expect(passwordTestField).toHaveValue('Pass@123');
+
+//      //click method
+//      userEvent.click(submitButton);
+//     });
+    
+//     //Assertion for test
+//     expect(store.getActions()[0]).toMatchObject({payload: { username: 'devesh', password: 'Pass@123' }
+//     });
+    
+//   });
+
+//   });
